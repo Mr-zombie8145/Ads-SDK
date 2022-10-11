@@ -14,21 +14,16 @@ import static com.solodroid.ads.sdk.util.Constant.GOOGLE_AD_MANAGER;
 import static com.solodroid.ads.sdk.util.Constant.IRONSOURCE;
 import static com.solodroid.ads.sdk.util.Constant.MOPUB;
 import static com.solodroid.ads.sdk.util.Constant.NONE;
-import static com.solodroid.ads.sdk.util.Constant.STARTAPP;
-import static com.solodroid.ads.sdk.util.Constant.UNITY;
 
 import android.app.Activity;
-import android.text.Html;
 import android.util.Log;
-
-import androidx.appcompat.app.AlertDialog;
+import android.widget.Toast;
 
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinSdk;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.ironsource.mediationsdk.IronSource;
-import com.solodroid.ads.sdk.R;
 import com.solodroid.ads.sdk.helper.AudienceNetworkInitializeHelper;
 
 import java.util.Map;
@@ -153,6 +148,10 @@ public class AdNetwork {
                         IronSource.setUserId(advertisingId);
                         IronSource.init(activity, ironSourceAppKey);
                         break;
+
+                    default:
+                        Toast.makeText(activity, "please select correct ad network", Toast.LENGTH_SHORT).show();
+                        break;
                 }
                 Log.d(TAG, "[" + adNetwork + "] is selected as Primary Ads");
             }
@@ -201,6 +200,10 @@ public class AdNetwork {
 
                     case NONE:
                         //do nothing
+                        break;
+
+                    default:
+                        Toast.makeText(activity, "please select correct ad network", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 Log.d(TAG, "[" + backupAdNetwork + "] is selected as Backup Ads");

@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -48,11 +49,6 @@ import com.solodroid.ads.sdk.util.Constant;
 import com.solodroid.ads.sdk.util.NativeTemplateStyle;
 import com.solodroid.ads.sdk.util.TemplateView;
 import com.solodroid.ads.sdk.util.Tools;
-import com.startapp.sdk.ads.nativead.NativeAdDetails;
-import com.startapp.sdk.ads.nativead.NativeAdPreferences;
-import com.startapp.sdk.ads.nativead.StartAppNativeAd;
-import com.startapp.sdk.adsbase.Ad;
-import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +119,19 @@ public class NativeAdViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void loadNativeAd(Context context, String adStatus, int placementStatus, String adNetwork, String backupAdNetwork, String adMobNativeId, String adManagerNativeId, String fanNativeId, String appLovinNativeId, boolean darkTheme, boolean legacyGDPR, String nativeAdStyle) {
+    public void loadNativeAd(Context context,
+                             String adStatus,
+                             int placementStatus,
+                             String adNetwork,
+                             String backupAdNetwork,
+                             String adMobNativeId,
+                             String adManagerNativeId,
+                             String fanNativeId,
+                             String appLovinNativeId,
+                             boolean darkTheme,
+                             boolean legacyGDPR,
+                             String nativeAdStyle) {
+
         if (adStatus.equals(AD_STATUS_ON)) {
             if (placementStatus != 0) {
                 switch (adNetwork) {
@@ -307,59 +315,6 @@ public class NativeAdViewHolder extends RecyclerView.ViewHolder {
                         }
                         break;
 
-                    case STARTAPP:
-                        if (startappNativeAd.getVisibility() != View.VISIBLE) {
-                            StartAppNativeAd startAppNativeAd = new StartAppNativeAd(context);
-                            NativeAdPreferences nativePrefs = new NativeAdPreferences()
-                                    .setAdsNumber(3)
-                                    .setAutoBitmapDownload(true)
-                                    .setPrimaryImageSize(Constant.STARTAPP_IMAGE_MEDIUM);
-                            AdEventListener adListener = new AdEventListener() {
-                                @Override
-                                public void onReceiveAd(@NonNull Ad arg0) {
-                                    Log.d("STARTAPP_ADS", "ad loaded");
-                                    startappNativeAd.setVisibility(View.VISIBLE);
-                                    nativeAdViewContainer.setVisibility(View.VISIBLE);
-                                    //noinspection rawtypes
-                                    ArrayList ads = startAppNativeAd.getNativeAds(); // get NativeAds list
-
-                                    // Print all ads details to log
-                                    for (Object ad : ads) {
-                                        Log.d("STARTAPP_ADS", ad.toString());
-                                    }
-
-                                    NativeAdDetails ad = (NativeAdDetails) ads.get(0);
-                                    if (ad != null) {
-                                        startappNativeImage.setImageBitmap(ad.getImageBitmap());
-                                        startappNativeIcon.setImageBitmap(ad.getSecondaryImageBitmap());
-                                        startappNativeTitle.setText(ad.getTitle());
-                                        startappNativeDescription.setText(ad.getDescription());
-                                        startappNativeButton.setText(ad.isApp() ? "Install" : "Open");
-                                        ad.registerViewForInteraction(itemView);
-                                    }
-
-                                    if (darkTheme) {
-                                        startappNativeBackground.setBackgroundResource(R.color.colorBackgroundDark);
-                                    } else {
-                                        startappNativeBackground.setBackgroundResource(R.color.colorBackgroundLight);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailedToReceiveAd(Ad arg0) {
-                                    //startapp_native_ad.setVisibility(View.GONE);
-                                    //native_ad_view_container.setVisibility(View.GONE);
-                                    loadBackupNativeAd(context, adStatus, placementStatus, backupAdNetwork, adMobNativeId, adManagerNativeId, fanNativeId, appLovinNativeId, darkTheme, legacyGDPR, nativeAdStyle);
-                                    Log.d(TAG, "ad failed");
-                                }
-                            };
-                            startAppNativeAd.loadAd(nativePrefs, adListener);
-                        } else {
-                            Log.d(TAG, "StartApp native ads has been loaded");
-                        }
-                        break;
-
                     case APPLOVIN:
                     case APPLOVIN_MAX:
                     case FAN_BIDDING_APPLOVIN_MAX:
@@ -406,6 +361,11 @@ public class NativeAdViewHolder extends RecyclerView.ViewHolder {
                             Log.d(TAG, "AppLovin Native ads has been loaded");
                         }
                         break;
+
+                    default:
+                        Toast.makeText(context, "please select correct ad network", Toast.LENGTH_SHORT).show();
+                        break;
+
 
                 }
             }
@@ -598,58 +558,6 @@ public class NativeAdViewHolder extends RecyclerView.ViewHolder {
                         }
                         break;
 
-                    case STARTAPP:
-                        if (startappNativeAd.getVisibility() != View.VISIBLE) {
-                            StartAppNativeAd startAppNativeAd = new StartAppNativeAd(context);
-                            NativeAdPreferences nativePrefs = new NativeAdPreferences()
-                                    .setAdsNumber(3)
-                                    .setAutoBitmapDownload(true)
-                                    .setPrimaryImageSize(Constant.STARTAPP_IMAGE_MEDIUM);
-                            AdEventListener adListener = new AdEventListener() {
-                                @Override
-                                public void onReceiveAd(@NonNull Ad arg0) {
-                                    Log.d("STARTAPP_ADS", "ad loaded");
-                                    startappNativeAd.setVisibility(View.VISIBLE);
-                                    nativeAdViewContainer.setVisibility(View.VISIBLE);
-                                    //noinspection rawtypes
-                                    ArrayList ads = startAppNativeAd.getNativeAds(); // get NativeAds list
-
-                                    // Print all ads details to log
-                                    for (Object ad : ads) {
-                                        Log.d("STARTAPP_ADS", ad.toString());
-                                    }
-
-                                    NativeAdDetails ad = (NativeAdDetails) ads.get(0);
-                                    if (ad != null) {
-                                        startappNativeImage.setImageBitmap(ad.getImageBitmap());
-                                        startappNativeIcon.setImageBitmap(ad.getSecondaryImageBitmap());
-                                        startappNativeTitle.setText(ad.getTitle());
-                                        startappNativeDescription.setText(ad.getDescription());
-                                        startappNativeButton.setText(ad.isApp() ? "Install" : "Open");
-                                        ad.registerViewForInteraction(itemView);
-                                    }
-
-                                    if (darkTheme) {
-                                        startappNativeBackground.setBackgroundResource(R.color.colorBackgroundDark);
-                                    } else {
-                                        startappNativeBackground.setBackgroundResource(R.color.colorBackgroundLight);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailedToReceiveAd(Ad arg0) {
-                                    startappNativeAd.setVisibility(View.GONE);
-                                    nativeAdViewContainer.setVisibility(View.GONE);
-                                    Log.d(TAG, "ad failed");
-                                }
-                            };
-                            startAppNativeAd.loadAd(nativePrefs, adListener);
-                        } else {
-                            Log.d(TAG, "StartApp native ads has been loaded");
-                        }
-                        break;
-
                     case APPLOVIN:
                     case APPLOVIN_MAX:
                     case FAN_BIDDING_APPLOVIN_MAX:
@@ -695,6 +603,11 @@ public class NativeAdViewHolder extends RecyclerView.ViewHolder {
 
                     case NONE:
                         nativeAdViewContainer.setVisibility(View.GONE);
+                        break;
+
+                    default:
+                        nativeAdViewContainer.setVisibility(View.GONE);
+                        Toast.makeText(context, "please select correct ad network", Toast.LENGTH_SHORT).show();
                         break;
 
                 }
